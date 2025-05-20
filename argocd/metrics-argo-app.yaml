@@ -1,0 +1,46 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: metrics-app
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  # annotations:
+  #   argocd-image-updater.argoproj.io/write-back-method: argocd # default
+  #   argocd-image-updater.argoproj.io/image-list: |
+  #     ghcr.io/cloudraftio/metrics-app:1.4
+  #   argocd-image-updater.argoproj.io/update-strategy: newest-build
+
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/surajwaghmare35/sre-metrics-app.git'
+    targetRevision: main
+    path: metrics-app
+    helm:
+      valueFiles:
+        - ../metrics-app/values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - Validate=false
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+      - RespectIgnoreDifferences=true
+      - ApplyOutOfSyncOnly=true
+    retry:
+      limit: 2
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m0s
+  revisionHistoryLimit: 2
+
+
+

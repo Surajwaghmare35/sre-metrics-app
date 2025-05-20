@@ -1,0 +1,20 @@
+---
+# Git repositories configure Argo CD with (optional).
+# This list is updated when configuring/removing repos from the UI/CLI
+# Note: the last example in the list would use a repository credential template, configured under "argocd-repo-creds.yaml".
+apiVersion: v1
+kind: Secret
+metadata:
+  name: sre-metrics-app
+  namespace: argocd
+  labels:
+    argocd.argoproj.io/secret-type: repository
+stringData:
+  name: sre-metrics-app
+  project: default
+  url: git@github.com:Surajwaghmare35/sre-metrics-app.git
+  password: github_pat_11AQNUDKA0dnnUpQT8NtuO_6Nf7tqXZLBc360VlC2WySg6bsVxqEURV0NSkjVR3hFBYP3K3WRQaOKXO
+  username: Surajwaghmare35
+  insecure: "true"
+  forceHttpBasicAuth: "true"
+  enableLfs: "true"
